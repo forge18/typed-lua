@@ -57,33 +57,33 @@ This is a comprehensive checklist for implementing TypedLua from start to finish
 
 ## Phase 1: Lexer & Parser (3-4 weeks)
 
-### Lexer Implementation
-- [ ] Create Token struct with kind and span
-- [ ] Define TokenKind enum with all token types
-- [ ] Implement Lexer struct with state tracking
-- [ ] Tokenize keywords (const, local, function, if, etc.)
-- [ ] Tokenize literals (number, string, boolean, nil)
-- [ ] Tokenize identifiers
-- [ ] Tokenize operators (+, -, *, /, ==, etc.)
-- [ ] Tokenize punctuation ({, }, (, ), [, ], etc.)
-- [ ] Handle single-line comments (//)
-- [ ] Handle multi-line comments (/* */)
-- [ ] Handle template literals with ${} expressions
-- [ ] Track line and column numbers accurately
-- [ ] Handle escape sequences in strings
-- [ ] Support hex numbers (0x...)
-- [ ] Support binary numbers (0b...)
-- [ ] Implement proper error reporting
+### Lexer Implementation ✅ COMPLETED
+- [x] Create Token struct with kind and span
+- [x] Define TokenKind enum with all token types
+- [x] Implement Lexer struct with state tracking
+- [x] Tokenize keywords (const, local, function, if, etc.)
+- [x] Tokenize literals (number, string, boolean, nil)
+- [x] Tokenize identifiers
+- [x] Tokenize operators (+, -, *, /, ==, etc.)
+- [x] Tokenize punctuation ({, }, (, ), [, ], etc.)
+- [x] Handle single-line comments (//)
+- [x] Handle multi-line comments (/* */)
+- [x] Handle template literals with ${} expressions
+- [x] Track line and column numbers accurately
+- [x] Handle escape sequences in strings
+- [x] Support hex numbers (0x...)
+- [x] Support binary numbers (0b...)
+- [x] Implement proper error reporting
 
-### Lexer Testing
-- [ ] Test all keyword tokens
-- [ ] Test all operator tokens
-- [ ] Test number literals (decimal, hex, binary, floats)
-- [ ] Test string literals with escapes
-- [ ] Test template literals
-- [ ] Test comments (single and multi-line)
-- [ ] Test error cases (unterminated strings, invalid chars)
-- [ ] Snapshot tests for complex files
+### Lexer Testing ✅ COMPLETED
+- [x] Test all keyword tokens
+- [x] Test all operator tokens
+- [x] Test number literals (decimal, hex, binary, floats)
+- [x] Test string literals with escapes
+- [x] Test template literals
+- [x] Test comments (single and multi-line)
+- [x] Test error cases (unterminated strings, invalid chars)
+- [x] Snapshot tests for complex files
 
 ### Parser - Statements
 - [ ] Create AST types from AST-Structure.md
