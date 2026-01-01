@@ -36,7 +36,7 @@ This is a comprehensive checklist for implementing TypedLua from start to finish
 - [x] Define CompilerOptions struct
 - [x] Implement YAML parsing for tlconfig.yaml
 - [x] Add default configuration values
-- [ ] Implement config merging (defaults → file → CLI)
+- [x] Implement config merging (defaults → file → CLI)
 
 ### CI/CD
 - [ ] Set up GitHub Actions workflow

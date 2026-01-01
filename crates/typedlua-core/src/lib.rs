@@ -5,7 +5,7 @@ pub mod errors;
 pub mod fs;
 pub mod span;
 
-pub use config::CompilerConfig;
+pub use config::{CliOverrides, CompilerConfig};
 pub use diagnostics::{Diagnostic, DiagnosticHandler, DiagnosticLevel};
 pub use di::Container;
 pub use errors::CompilationError;

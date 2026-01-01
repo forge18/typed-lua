@@ -171,11 +171,72 @@ impl CompilerConfig {
     }
 
     /// Merge this configuration with CLI overrides
-    pub fn merge_with_cli(&mut self, cli_config: CompilerOptions) {
-        // This would merge CLI flags into the file config
-        // For now, we'll keep it simple
-        self.compiler_options = cli_config;
+    /// Only non-None/non-default CLI values override file config
+    pub fn merge(&mut self, overrides: &CliOverrides) {
+        // Merge compiler options
+        if let Some(strict_null_checks) = overrides.strict_null_checks {
+            self.compiler_options.strict_null_checks = strict_null_checks;
+        }
+        if let Some(strict_naming) = overrides.strict_naming {
+            self.compiler_options.strict_naming = strict_naming;
+        }
+        if let Some(no_implicit_unknown) = overrides.no_implicit_unknown {
+            self.compiler_options.no_implicit_unknown = no_implicit_unknown;
+        }
+        if let Some(no_explicit_unknown) = overrides.no_explicit_unknown {
+            self.compiler_options.no_explicit_unknown = no_explicit_unknown;
+        }
+        if let Some(target) = overrides.target {
+            self.compiler_options.target = target;
+        }
+        if let Some(enable_oop) = overrides.enable_oop {
+            self.compiler_options.enable_oop = enable_oop;
+        }
+        if let Some(enable_fp) = overrides.enable_fp {
+            self.compiler_options.enable_fp = enable_fp;
+        }
+        if let Some(enable_decorators) = overrides.enable_decorators {
+            self.compiler_options.enable_decorators = enable_decorators;
+        }
+        if let Some(allow_non_typed_lua) = overrides.allow_non_typed_lua {
+            self.compiler_options.allow_non_typed_lua = allow_non_typed_lua;
+        }
+        if let Some(ref out_dir) = overrides.out_dir {
+            self.compiler_options.out_dir = Some(out_dir.clone());
+        }
+        if let Some(ref out_file) = overrides.out_file {
+            self.compiler_options.out_file = Some(out_file.clone());
+        }
+        if let Some(source_map) = overrides.source_map {
+            self.compiler_options.source_map = source_map;
+        }
+        if let Some(no_emit) = overrides.no_emit {
+            self.compiler_options.no_emit = no_emit;
+        }
+        if let Some(pretty) = overrides.pretty {
+            self.compiler_options.pretty = pretty;
+        }
     }
+}
+
+/// CLI overrides for configuration
+/// All fields are optional - only specified flags override file config
+#[derive(Debug, Default, Clone)]
+pub struct CliOverrides {
+    pub strict_null_checks: Option<bool>,
+    pub strict_naming: Option<StrictLevel>,
+    pub no_implicit_unknown: Option<bool>,
+    pub no_explicit_unknown: Option<bool>,
+    pub target: Option<LuaVersion>,
+    pub enable_oop: Option<bool>,
+    pub enable_fp: Option<bool>,
+    pub enable_decorators: Option<bool>,
+    pub allow_non_typed_lua: Option<bool>,
+    pub out_dir: Option<String>,
+    pub out_file: Option<String>,
+    pub source_map: Option<bool>,
+    pub no_emit: Option<bool>,
+    pub pretty: Option<bool>,
 }
 
 #[cfg(test)]
@@ -207,5 +268,78 @@ compilerOptions:
         let config: CompilerConfig = serde_yaml::from_str(yaml).unwrap();
         assert_eq!(config.compiler_options.target, LuaVersion::Lua53);
         assert!(!config.compiler_options.enable_oop);
+    }
+
+    #[test]
+    fn test_config_merge_overrides_file() {
+        let mut config = CompilerConfig::default();
+        // Default has Lua54 and enableOop = true
+        assert_eq!(config.compiler_options.target, LuaVersion::Lua54);
+        assert!(config.compiler_options.enable_oop);
+
+        // CLI overrides both
+        let overrides = CliOverrides {
+            target: Some(LuaVersion::Lua51),
+            enable_oop: Some(false),
+            ..Default::default()
+        };
+
+        config.merge(&overrides);
+
+        assert_eq!(config.compiler_options.target, LuaVersion::Lua51);
+        assert!(!config.compiler_options.enable_oop);
+    }
+
+    #[test]
+    fn test_config_merge_partial_overrides() {
+        let mut config = CompilerConfig::default();
+        assert!(config.compiler_options.strict_null_checks);
+        assert!(config.compiler_options.enable_oop);
+
+        // Only override one field
+        let overrides = CliOverrides {
+            enable_oop: Some(false),
+            ..Default::default()
+        };
+
+        config.merge(&overrides);
+
+        // This field was overridden
+        assert!(!config.compiler_options.enable_oop);
+        // This field remains from file/default
+        assert!(config.compiler_options.strict_null_checks);
+    }
+
+    #[test]
+    fn test_config_merge_empty_overrides() {
+        let mut config = CompilerConfig::default();
+        let original_target = config.compiler_options.target;
+        let original_oop = config.compiler_options.enable_oop;
+
+        // Empty overrides shouldn't change anything
+        let overrides = CliOverrides::default();
+        config.merge(&overrides);
+
+        assert_eq!(config.compiler_options.target, original_target);
+        assert_eq!(config.compiler_options.enable_oop, original_oop);
+    }
+
+    #[test]
+    fn test_config_merge_output_options() {
+        let mut config = CompilerConfig::default();
+        assert!(config.compiler_options.out_dir.is_none());
+        assert!(config.compiler_options.out_file.is_none());
+
+        let overrides = CliOverrides {
+            out_dir: Some("dist".to_string()),
+            source_map: Some(true),
+            ..Default::default()
+        };
+
+        config.merge(&overrides);
+
+        assert_eq!(config.compiler_options.out_dir, Some("dist".to_string()));
+        assert!(config.compiler_options.source_map);
+        assert!(config.compiler_options.out_file.is_none()); // Not overridden
     }
 }
