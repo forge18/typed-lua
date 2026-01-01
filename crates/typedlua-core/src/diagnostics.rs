@@ -95,7 +95,10 @@ impl DiagnosticHandler for ConsoleDiagnosticHandler {
                 level_str, diagnostic.span, diagnostic.message
             );
         } else {
-            eprintln!("{} at {}: {}", level_str, diagnostic.span, diagnostic.message);
+            eprintln!(
+                "{} at {}: {}",
+                level_str, diagnostic.span, diagnostic.message
+            );
         }
 
         self.diagnostics.lock().unwrap().push(diagnostic);

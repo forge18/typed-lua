@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum LuaVersion {
     #[serde(rename = "5.1")]
     Lua51,
@@ -10,29 +10,19 @@ pub enum LuaVersion {
     #[serde(rename = "5.3")]
     Lua53,
     #[serde(rename = "5.4")]
+    #[default]
     Lua54,
 }
 
-impl Default for LuaVersion {
-    fn default() -> Self {
-        LuaVersion::Lua54
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum StrictLevel {
     #[serde(rename = "off")]
     Off,
     #[serde(rename = "warning")]
     Warning,
     #[serde(rename = "error")]
+    #[default]
     Error,
-}
-
-impl Default for StrictLevel {
-    fn default() -> Self {
-        StrictLevel::Error
-    }
 }
 
 /// Compiler options that control type checking and code generation

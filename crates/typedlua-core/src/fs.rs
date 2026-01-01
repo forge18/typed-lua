@@ -70,15 +70,12 @@ impl Default for MockFileSystem {
 
 impl FileSystem for MockFileSystem {
     fn read_file(&self, path: &Path) -> Result<String, std::io::Error> {
-        self.files
-            .get(path)
-            .cloned()
-            .ok_or_else(|| {
-                std::io::Error::new(
-                    std::io::ErrorKind::NotFound,
-                    format!("File not found: {}", path.display()),
-                )
-            })
+        self.files.get(path).cloned().ok_or_else(|| {
+            std::io::Error::new(
+                std::io::ErrorKind::NotFound,
+                format!("File not found: {}", path.display()),
+            )
+        })
     }
 
     fn write_file(&self, _path: &Path, _content: &str) -> Result<(), std::io::Error> {

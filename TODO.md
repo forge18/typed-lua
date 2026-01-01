@@ -39,10 +39,10 @@ This is a comprehensive checklist for implementing TypedLua from start to finish
 - [x] Implement config merging (defaults → file → CLI)
 
 ### CI/CD
-- [ ] Set up GitHub Actions workflow
-- [ ] Configure cargo test on push
-- [ ] Add cargo fmt check
-- [ ] Add cargo clippy check
+- [x] Set up GitHub Actions workflow
+- [x] Configure cargo test on push
+- [x] Add cargo fmt check
+- [x] Add cargo clippy check
 - [ ] Set up code coverage reporting (codecov or coveralls)
 - [ ] Add build status badge to README
 
