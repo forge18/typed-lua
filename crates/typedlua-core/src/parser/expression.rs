@@ -453,6 +453,7 @@ impl Parser {
             TokenKind::LeftBracket => self.parse_array(),
             TokenKind::Function => self.parse_function_expression(),
             TokenKind::Match => self.parse_match_expression(),
+            TokenKind::TemplateString(parts) => self.parse_template_literal(parts.clone(), start_span),
             _ => Err(ParserError {
                 message: format!("Unexpected token in expression: {:?}", self.current().kind),
                 span: start_span,
@@ -627,6 +628,40 @@ impl Parser {
             guard,
             body,
             span: start_span.combine(&end_span),
+        })
+    }
+
+    fn parse_template_literal(
+        &mut self,
+        lexer_parts: Vec<crate::lexer::TemplatePart>,
+        start_span: crate::span::Span,
+    ) -> Result<Expression, ParserError> {
+        self.advance(); // Consume the template string token
+
+        let mut ast_parts = Vec::new();
+
+        for lexer_part in lexer_parts {
+            match lexer_part {
+                crate::lexer::TemplatePart::String(s) => {
+                    ast_parts.push(crate::ast::expression::TemplatePart::String(s));
+                }
+                crate::lexer::TemplatePart::Expression(tokens) => {
+                    // Parse the expression tokens
+                    // We need to create a temporary parser for these tokens
+                    let handler = self.diagnostic_handler.clone();
+                    let mut temp_parser = Parser::new(tokens, handler);
+                    let expr = temp_parser.parse_expression()?;
+                    ast_parts.push(crate::ast::expression::TemplatePart::Expression(expr));
+                }
+            }
+        }
+
+        Ok(Expression {
+            kind: ExpressionKind::Template(TemplateLiteral {
+                parts: ast_parts,
+                span: start_span,
+            }),
+            span: start_span,
         })
     }
 

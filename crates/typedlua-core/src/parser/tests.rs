@@ -474,3 +474,60 @@ fn test_parse_decorator_with_args() {
         _ => panic!("Expected class declaration"),
     }
 }
+
+#[test]
+fn test_parse_template_literal() {
+    let source = r#"const msg = `Hello, ${name}!`"#;
+    let program = parse_source(source).expect("Parse failed");
+    assert_eq!(program.statements.len(), 1);
+
+    match &program.statements[0] {
+        crate::ast::statement::Statement::Variable(decl) => {
+            match &decl.initializer.kind {
+                crate::ast::expression::ExpressionKind::Template(template) => {
+                    assert_eq!(template.parts.len(), 3); // "Hello, ", expr, "!"
+
+                    // Check first part is string
+                    assert!(matches!(
+                        &template.parts[0],
+                        crate::ast::expression::TemplatePart::String(_)
+                    ));
+
+                    // Check second part is expression
+                    assert!(matches!(
+                        &template.parts[1],
+                        crate::ast::expression::TemplatePart::Expression(_)
+                    ));
+
+                    // Check third part is string
+                    assert!(matches!(
+                        &template.parts[2],
+                        crate::ast::expression::TemplatePart::String(_)
+                    ));
+                }
+                _ => panic!("Expected template literal"),
+            }
+        }
+        _ => panic!("Expected variable declaration"),
+    }
+}
+
+#[test]
+fn test_parse_template_literal_complex() {
+    let source = r#"const result = `${a} + ${b} = ${a + b}`"#;
+    let program = parse_source(source).expect("Parse failed");
+    assert_eq!(program.statements.len(), 1);
+
+    match &program.statements[0] {
+        crate::ast::statement::Statement::Variable(decl) => {
+            match &decl.initializer.kind {
+                crate::ast::expression::ExpressionKind::Template(template) => {
+                    // Should have: expr, " + ", expr, " = ", expr
+                    assert_eq!(template.parts.len(), 5);
+                }
+                _ => panic!("Expected template literal"),
+            }
+        }
+        _ => panic!("Expected variable declaration"),
+    }
+}

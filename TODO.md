@@ -111,7 +111,7 @@ This is a comprehensive checklist for implementing TypedLua from start to finish
 - [x] Parse array literals {1, 2, 3}
 - [x] Parse object literals {x = 1, y = 2}
 - [x] Parse parenthesized expressions
-- [ ] Parse template literals (deferred - lexer support needed)
+- [x] Parse template literals (`Hello, ${name}!`)
 - [x] Parse conditional expressions (a ? b : c)
 - [x] Parse arrow functions (x => expr and (params) => expr)
 - [x] Parse function expressions
@@ -152,7 +152,7 @@ This is a comprehensive checklist for implementing TypedLua from start to finish
 - [x] Test all type annotation syntax
 - [x] Test error recovery (basic synchronization)
 - [x] Test complex programs
-- [x] 22 comprehensive parser tests passing
+- [x] 24 comprehensive parser tests passing
 
 ### Parser Error Recovery ✅ COMPLETED
 - [x] Implement error recovery strategies (synchronization)
